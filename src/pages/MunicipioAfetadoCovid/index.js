@@ -12,29 +12,40 @@ import {
   ResultTitleInfo,
   ResultTotalInfo,
 } from './style';
-import {FlatList} from 'react-native-gesture-handler';
+import {FlatList} from 'react-native';
 
 function MunicipioAfetadoCovid() {
   const [situationByCounty, setSituationByCounty] = useState([]);
+
   const [confirmedTotal, setConfirmedTotal] = useState([]);
-  const [data, setData] = useState('');
+
+  const [date, setDate] = useState(getCurrentDate);
+
   const [idMunicipio, setIdMunicipio] = useState('');
 
   const {getSituationByCounty, getConfirmedTotal} = useCovid();
 
   const getDataCounty = () => {
-    getSituationByCounty(data, idMunicipio).then((e) =>
+    getSituationByCounty(date, idMunicipio).then((e) =>
       setSituationByCounty(e.data),
     );
   };
 
   const getDataConfirmedTotal = () => {
-    getConfirmedTotal(data).then((e) => setConfirmedTotal(e.data));
+    getConfirmedTotal(date).then((e) => setConfirmedTotal(e.data));
+  };
+
+  const getCurrentDate = () => {
+    let date = new Date().getDate();
+    let month = new Date().getMonth();
+    let year = new Date().getFullYear();
+
+    return `${year}-${month}-${date}`;
   };
 
   useEffect(() => {
     getDataCounty(), getDataConfirmedTotal();
-  }, [data, idMunicipio]);
+  }, [date, idMunicipio]);
 
   return (
     <Page>
@@ -42,7 +53,7 @@ function MunicipioAfetadoCovid() {
       <InputData
         placeholder="data"
         keyboardType="number-pad"
-        onChangeText={(e) => setData(e)}
+        onChangeText={(e) => setDate(e)}
       />
       <InputData
         placeholder="Id Municipio"
@@ -50,9 +61,7 @@ function MunicipioAfetadoCovid() {
         onChangeText={(e) => setIdMunicipio(e)}
       />
       <ResultInfo>
-        <ResultTitle>
-          Quantidade Total de Municípios afetados pelo Covid-19
-        </ResultTitle>
+        <ResultTitle>Municípios do CE afetados pela Covid-19</ResultTitle>
         <ResultTotalInfo>
           {confirmedTotal.map((item, index) => (
             <ResultTotalInfo key={index}>
@@ -63,26 +72,27 @@ function MunicipioAfetadoCovid() {
       </ResultInfo>
       <ResultArea>
         {idMunicipio == '' ? (
-          <ResultInfo>
+          <>
             <ResultTitleInfo>Dados Gerais dos Municípios</ResultTitleInfo>
-          </ResultInfo>
+          </>
         ) : (
-          <ResultInfo>
+          <>
             <ResultTitleInfo>Dados Gerais do Municipio:</ResultTitleInfo>
             <ResultTitleInfo>{idMunicipio}</ResultTitleInfo>
-          </ResultInfo>
+          </>
         )}
         <FlatList
+          refreshing={false}
           onRefresh={() => getDataCounty()}
           data={situationByCounty}
           renderItem={({item, index}) =>
             index < 4 && (
-              <ResultItem key={index}>
+              <ResultItem key={toString(index)}>
                 {item.tipo}: {item.quantidade}
               </ResultItem>
             )
           }
-          keyExtractor={(index) => toString(index)}
+          keyExtractor={(item, index) => toString(index)}
         />
       </ResultArea>
     </Page>

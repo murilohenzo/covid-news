@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 'use strict';
 import React, {useState, useEffect} from 'react';
-import {View, Text, ActivityIndicator} from 'react-native';
+import {View, Text, ActivityIndicator, Image} from 'react-native';
 import MapView, {Marker, Callout} from 'react-native-maps';
 import {Page} from './style';
 import useLocalization from '../../services/map';
@@ -15,11 +15,19 @@ function Map() {
 
   const [localizacoes, setLocalizacoes] = useState([]);
 
+  const getCurrentDate = () => {
+    let date = new Date().getDate();
+    let month = new Date().getMonth();
+    let year = new Date().getFullYear();
+
+    return `${year}-${month}-${date}`;
+  };
+
   const getDataLocalization = async () => {
     setLoading(true);
     await axios
       .get(
-        'https://indicadores.integrasus.saude.ce.gov.br/api/coronavirus/qtd-por-municipio?data=2020-04-03&tipo=Confirmado&idMunicipio=',
+        `https://indicadores.integrasus.saude.ce.gov.br/api/coronavirus/qtd-por-municipio?data=${getCurrentDate()}&tipo=Confirmado&idMunicipio=`,
       )
       .then((response) => {
         const municipios = response.data.map((item) => {
