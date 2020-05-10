@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const KEY = 'KEY GOOGLE MAPS PLATFORM API';
+const KEY = 'AIzaSyBZaVHZTiv3USUHySmQf0LhPJxwu5yXDFk';
 
 export default function useLocalization() {
   return {

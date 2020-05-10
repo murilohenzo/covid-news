@@ -49,7 +49,7 @@ function Map() {
                 nome: municipio.municipio,
                 idMunicipio: municipio.idMunicipio,
                 tipo: municipio.tipo,
-                qtdConfirmados: municipio.qtdConfirmado,
+                qtdConfirmados: municipio.quantidade,
                 latitude: lat,
                 logintude: lng,
               };

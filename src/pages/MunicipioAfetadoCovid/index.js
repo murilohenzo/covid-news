@@ -15,7 +15,13 @@ import {
 import {FlatList} from 'react-native';
 
 function MunicipioAfetadoCovid() {
-  const [situationByCounty, setSituationByCounty] = useState([]);
+  const [dataCountySuspect, setDataCountySuspect] = useState([]);
+
+  const [dataCountyExams, setDataCountyExams] = useState([]);
+
+  const [dataCountyConfirmed, setDataCountyConfirmed] = useState([]);
+
+  const [dataCountyDeath, setDataCountyDeath] = useState([]);
 
   const [confirmedTotal, setConfirmedTotal] = useState([]);
 
@@ -23,17 +29,53 @@ function MunicipioAfetadoCovid() {
 
   const [idMunicipio, setIdMunicipio] = useState('');
 
-  const {getSituationByCounty, getConfirmedTotal} = useCovid();
+  const {
+    getDeathByCounty,
+    getConfirmdByCounty,
+    getConfirmedTotal,
+    getSuspectByCounty,
+    getExamsByCounty,
+  } = useCovid();
 
-  const getDataCounty = () => {
-    getSituationByCounty(date, idMunicipio).then((e) =>
-      setSituationByCounty(e.data),
-    );
+  const getDataCountyDeath = () => {
+    getDeathByCounty(date, idMunicipio).then((e) => setDataCountyDeath(e.data));
   };
 
   const getDataConfirmedTotal = () => {
     getConfirmedTotal(date).then((e) => setConfirmedTotal(e.data));
   };
+
+  const getDataCountySuspect = () => {
+    getSuspectByCounty(date, idMunicipio).then((e) =>
+      setDataCountySuspect(e.data),
+    );
+  };
+
+  const getDataCountyExams = () => {
+    getExamsByCounty(date, idMunicipio).then((e) => setDataCountyExams(e.data));
+  };
+
+  const getDataCountyConfirmed = () => {
+    getConfirmdByCounty(date, idMunicipio).then((e) =>
+      setDataCountyConfirmed(e.data),
+    );
+  };
+
+  let confirmeds = [
+    {
+      tipo: 'Confirmados',
+      quantidade: dataCountyConfirmed
+        .map((e, i) => e.quantidade)
+        .reduce((a, b) => a + b, 0),
+    },
+  ];
+
+  let fullData = [
+    ...dataCountySuspect,
+    ...dataCountyExams,
+    ...confirmeds,
+    ...dataCountyDeath,
+  ];
 
   const getCurrentDate = () => {
     let date = new Date().getDate();
@@ -44,7 +86,11 @@ function MunicipioAfetadoCovid() {
   };
 
   useEffect(() => {
-    getDataCounty(), getDataConfirmedTotal();
+    getDataCountyConfirmed(),
+      getDataCountyDeath(),
+      getDataCountySuspect(),
+      getDataCountyExams(),
+      getDataConfirmedTotal();
   }, [date, idMunicipio]);
 
   return (
@@ -83,8 +129,8 @@ function MunicipioAfetadoCovid() {
         )}
         <FlatList
           refreshing={false}
-          onRefresh={() => getDataCounty()}
-          data={situationByCounty}
+          onRefresh={() => getDataCountyDeath()}
+          data={fullData}
           renderItem={({item, index}) =>
             index < 4 && (
               <ResultItem key={toString(index)}>
