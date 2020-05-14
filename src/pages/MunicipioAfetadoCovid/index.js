@@ -107,6 +107,8 @@ function MunicipioAfetadoCovid() {
     console.log(municipiosFiltered);
     if (municipiosFiltered.length > 0) {
       setIdMunicipio(municipiosFiltered[0].idMunicipio);
+    } else {
+      setIdMunicipio('');
     }
   };
 
