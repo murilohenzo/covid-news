@@ -1,6 +1,7 @@
 import React from 'react';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import MunicipioAfetadoCovid from '../pages/MunicipioAfetadoCovid/index';
+import '../config/StatusBarConfig';
 import Map from '../pages/Map/index';
 
 const MainStack = createDrawerNavigator();

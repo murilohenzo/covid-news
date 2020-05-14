@@ -114,7 +114,11 @@ function Map() {
                 longitude: localizacao.logintude,
               }}
               title={localizacao.nome}>
-              <Callout>
+              <Image
+                source={require('../../assets/images/covid03.png')}
+                style={{width: 30, height: 30}}
+              />
+              <Callout style={{width: 200, height: 80}}>
                 <View style={{backgroundColor: '#FFF'}}>
                   <Text>Nome: {localizacao.nome}</Text>
                   <Text>Id Municipio: {localizacao.idMunicipio}</Text>
