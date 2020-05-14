@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import useCovid from '../../services/api';
 import {
   Page,
@@ -15,15 +15,23 @@ import {
 import {FlatList} from 'react-native';
 
 function MunicipioAfetadoCovid() {
+  const inputIdMunicipioRef = useRef();
+
+  const [nameMunicipio, setNameMunicipio] = useState('');
+
   const [dataCountySuspect, setDataCountySuspect] = useState([]);
 
   const [dataCountyExams, setDataCountyExams] = useState([]);
 
   const [dataCountyConfirmed, setDataCountyConfirmed] = useState([]);
 
+  const [dataCountyRecovered, setDataCountyRecovered] = useState([]);
+
   const [dataCountyDeath, setDataCountyDeath] = useState([]);
 
   const [confirmedTotal, setConfirmedTotal] = useState([]);
+
+  const [municipiosOptions, setMunicipiosOptions] = useState([]);
 
   const [date, setDate] = useState(getCurrentDate);
 
@@ -35,6 +43,8 @@ function MunicipioAfetadoCovid() {
     getConfirmedTotal,
     getSuspectByCounty,
     getExamsByCounty,
+    getRecoveredByCounty,
+    getNameMunicipios,
   } = useCovid();
 
   const getDataCountyDeath = () => {
@@ -61,6 +71,18 @@ function MunicipioAfetadoCovid() {
     );
   };
 
+  const getDataCountyRecovered = () => {
+    getRecoveredByCounty(date, idMunicipio).then((e) => {
+      setDataCountyRecovered(e.data);
+    });
+  };
+
+  const getDataNameMunicipios = () => {
+    getNameMunicipios(date).then((e) => {
+      setMunicipiosOptions(e.data);
+    });
+  };
+
   let confirmeds = [
     {
       tipo: 'Confirmados',
@@ -74,37 +96,56 @@ function MunicipioAfetadoCovid() {
     ...dataCountySuspect,
     ...dataCountyExams,
     ...confirmeds,
+    ...dataCountyRecovered,
     ...dataCountyDeath,
   ];
+
+  const getIdByName = () => {
+    const municipiosFiltered = municipiosOptions.filter(
+      (municipio) => municipio.municipio === nameMunicipio.toUpperCase(),
+    );
+    console.log(municipiosFiltered);
+    if (municipiosFiltered.length > 0) {
+      setIdMunicipio(municipiosFiltered[0].idMunicipio);
+    }
+  };
 
   const getCurrentDate = () => {
     let date = new Date().getDate();
     let month = new Date().getMonth();
     let year = new Date().getFullYear();
 
-    return `${year}-${month}-${date}`;
+    return `${year}-0${month}-${date}`;
   };
 
   useEffect(() => {
-    getDataCountyConfirmed(),
-      getDataCountyDeath(),
-      getDataCountySuspect(),
-      getDataCountyExams(),
-      getDataConfirmedTotal();
-  }, [date, idMunicipio]);
+    getDataCountyConfirmed();
+    getDataCountyDeath();
+    getDataCountySuspect();
+    getDataCountyExams();
+    getDataCountyRecovered();
+    getDataConfirmedTotal();
+    getDataNameMunicipios();
+  }, [idMunicipio]);
 
   return (
     <Page>
       <HeaderText>Dados da Covid-19</HeaderText>
       <InputData
-        placeholder="data"
+        placeholder={`Data atual ${getCurrentDate()}`}
         keyboardType="number-pad"
         onChangeText={(e) => setDate(e)}
+        returnKeyType="next"
+        onSubmitEditing={() => inputIdMunicipioRef.current.focus()}
       />
       <InputData
-        placeholder="Id Municipio"
-        keyboardType="number-pad"
-        onChangeText={(e) => setIdMunicipio(e)}
+        placeholder="Nome do Município"
+        keyboardType="email-address"
+        onChangeText={(e) => setNameMunicipio(e)}
+        autoCapitalize="words"
+        returnKeyType="send"
+        onSubmitEditing={getIdByName}
+        ref={inputIdMunicipioRef}
       />
       <ResultInfo>
         <ResultTitle>Municípios do CE afetados pela Covid-19</ResultTitle>
@@ -124,20 +165,18 @@ function MunicipioAfetadoCovid() {
         ) : (
           <>
             <ResultTitleInfo>Dados Gerais do Municipio:</ResultTitleInfo>
-            <ResultTitleInfo>{idMunicipio}</ResultTitleInfo>
+            <ResultTitleInfo>{nameMunicipio.toUpperCase()}</ResultTitleInfo>
           </>
         )}
         <FlatList
           refreshing={false}
-          onRefresh={() => getDataCountyDeath()}
+          onRefresh={() => fullData()}
           data={fullData}
-          renderItem={({item, index}) =>
-            index < 4 && (
-              <ResultItem key={toString(index)}>
-                {item.tipo}: {item.quantidade}
-              </ResultItem>
-            )
-          }
+          renderItem={({item, index}) => (
+            <ResultItem key={toString(index)}>
+              {item.tipo}: {item.quantidade}
+            </ResultItem>
+          )}
           keyExtractor={(item, index) => toString(index)}
         />
       </ResultArea>

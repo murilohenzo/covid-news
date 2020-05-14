@@ -30,12 +30,12 @@ export const InputData = styled.TextInput`
 
 export const ResultArea = styled.View`
   width: 90%;
-  height: 45%;
+  height: 49%;
   margin-top: 30px;
   background-color: #eee;
   padding-left: 10%;
   padding-right: 10%;
-  padding-top: 10%;
+  padding-top: 5%;
   justify-content: center;
   align-items: center;
   flex-direction: column;
@@ -43,7 +43,8 @@ export const ResultArea = styled.View`
 `;
 
 export const ResultItem = styled.Text`
-  font-size: 18px;
+  font-size: 20px;
+  margin-top: 10px;
   margin-bottom: 15px;
   font-weight: bold;
 `;
@@ -59,7 +60,7 @@ export const ResultInfo = styled.View`
 `;
 
 export const ResultTitleInfo = styled.Text`
-  font-size: 18px;
+  font-size: 20px;
   margin-bottom: 10px;
   font-weight: bold;
   justify-content: center;

@@ -23,6 +23,16 @@ export default function useCovid() {
         `https://indicadores.integrasus.saude.ce.gov.br/api/coronavirus/qtd-por-faixa-etaria-sexo?data=${data}&tipo=Confirmado&idMunicipio=${idMunicipio}`,
       );
     },
+    async getRecoveredByCounty(data, idMunicipio) {
+      return await axios.get(
+        `https://indicadores.integrasus.saude.ce.gov.br/api/coronavirus/qtd-recuperados?data=${data}&tipo=Confirmado&idMunicipio=${idMunicipio}`,
+      );
+    },
+    async getNameMunicipios(data) {
+      return await axios.get(
+        `https://indicadores.integrasus.saude.ce.gov.br/api/coronavirus/qtd-por-municipio?data=${data}&tipo=Confirmado&idMunicipio=`
+      );
+    },
     async getConfirmedTotal(data) {
       return await axios.get(
         `https://indicadores.integrasus.saude.ce.gov.br/api/coronavirus/qtd-municipios-casos-confirmados?data=${data}&tipo=Confirmado&idMunicipio=`,
